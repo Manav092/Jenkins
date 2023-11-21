@@ -5,3 +5,5 @@ num2=20
 sum=$(( $num1 + $num2 ))
 
 echo "Sum is: $sum"
+
+echo "Task is completed"
