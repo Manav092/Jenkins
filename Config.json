@@ -1,7 +1,7 @@
 {
   "app": {
     "IP": "127.0.0.1",
-    "Port": "3423534",
+    "Port": "859745954",
     "enableSSL": false,
     "environment": "development",
     "url": "https://pxo2dev.rockwelltrading.com/#/login"
