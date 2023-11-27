@@ -18,7 +18,7 @@
     "multipleStatements": true
   },
   "mysqlV2": {
-    "host": "pxo-2-0-dev.cihqbivmorxp.us-east-1.rds.amazonaws.com",
+    "host": "pxo-2-0-dev.cihdfsdfqbivmorxp.us-east-1.rds.amazonaws.com",
     "port": 3306,
     "user": "igor",
     "password": "20igor@&db",
