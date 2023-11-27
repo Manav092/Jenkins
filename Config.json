@@ -3,7 +3,7 @@
     "IP": "127.0.0.1",
     "Port": "T/hNKNSaxmFoMEBF",
     "enableSSL": true,
-    "environment": "development",
+    "environment": "developmentevvc",
     "url": "https://pxo2dev.rockwelltrading.com/#/login"
   },
   "mysql": {
