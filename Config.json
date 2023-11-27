@@ -36,7 +36,7 @@
   "metrics": {
     "serverUrl": null,
     "secretToken": null,
-    "serviceName": "PXOv2-Backend-Local",
+    "serviceName": "PXOv22565-Backend-Local",
     "opentelemetryBridgeEnabled": true
   },
   "infusionSoft": {
