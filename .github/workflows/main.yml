@@ -9,14 +9,16 @@ jobs:
   enforce_pattern:
     runs-on: ubuntu-latest
     env:
-      PAT: ${{ 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 }}
+      PAT: ${{ secrets.PAT }}
     steps:
       - name: Check Branch Name Pattern
         run: |
           BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}")
           if [[ ! $BRANCH_NAME =~ ^feature/.*$ ]]; then
             echo "Error: Branch name must start with 'feature/'."
+            # Set up the token for authentication
+            export TOKEN="Authorization: token $PAT"
             # Delete the branch using GitHub API
-            curl -X DELETE -H "Authorization: token $PAT" "https://api.github.com/repos/${GITHUB_REPOSITORY}/git/refs/heads/${BRANCH_NAME}"
+            curl -X DELETE -H "$TOKEN" "https://api.github.com/repos/${GITHUB_REPOSITORY}/git/refs/heads/${BRANCH_NAME}"
             exit 1
           fi
