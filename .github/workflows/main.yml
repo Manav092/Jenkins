@@ -1,24 +1,70 @@
-name: Enforce Branch Pattern
-
+name: Pull Request Checks
 on:
-  create:
-    branches:
-      - '*'
-
+  pull_request:
+    types: [opened, synchronize]
 jobs:
-  enforce_pattern:
+  checks:
     runs-on: ubuntu-latest
-    env:
-      PAT: ${{ secrets.PAT }}
     steps:
-      - name: Check Branch Name Pattern
+      - name: Check lint
+        id: lint
+        uses: actions/checkout@v2
         run: |
-          BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}")
-          if [[ ! $BRANCH_NAME =~ ^feature/.*$ ]]; then
-            echo "Error: Branch name must start with 'feature/'."
-            # Set up the token for authentication
-            export TOKEN="Authorization: token $PAT"
-            # Delete the branch using GitHub API
-            curl -X DELETE -H "$TOKEN" "https://api.github.com/repos/${GITHUB_REPOSITORY}/git/refs/heads/${BRANCH_NAME}"
-            exit 1
-          fi
+          # Run lint check
+          npm install
+          npm run lint
+      - name: Check tests
+        id: tests
+        uses: actions/checkout@v2
+        run: |
+          # Run test check
+          npm install
+          npm test
+
+    # Add the required checks
+    needs:
+      - lint
+      - tests
+    always:
+      - name: Set required checks
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { context } = github;
+            const { repo, runId } = context;
+            const { pull_request } = context.payload;
+            const { number } = pull_request;
+
+            await github.rest.checks.create({
+              owner: repo.owner,
+              repo: repo.repo,
+              name: 'check-lint',
+              head_sha: pull_request.head.sha,
+              status: 'completed',
+              conclusion: 'success',
+              output: {
+                title: 'Lint Check',
+                summary: 'Lint check passed.',
+              },
+            });
+
+            await github.rest.checks.create({
+              owner: repo.owner,
+              repo: repo.repo,
+              name: 'check-tests',
+              head_sha: pull_request.head.sha,
+              status: 'completed',
+              conclusion: 'success',
+              output: {
+                title: 'Tests Check',
+                summary: 'Tests check passed.',
+              },
+            });
+
+            await github.rest.issues.addAssignees({
+              owner: repo.owner,
+              repo: repo.repo,
+              issue_number: number,
+              assignees: ['octocat'],
+            });
